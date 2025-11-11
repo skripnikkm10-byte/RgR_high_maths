@@ -66,3 +66,67 @@ def det2x2(matrix): #TODO
                 x[1]=x[1]*matrix[i][j]
     x[1]=x[1]*-1
     return sum(x)
+def get_minor(matrix, row, col):
+    minor=[[0,0],[0,0]]
+    k=0
+    x=0
+    for i in range(3):
+        for j in range(3):
+            if i!=row and j!=col:
+                minor[k][x]=matrix[i][j]
+                if x<k:
+                    x-=1
+                    k+=1
+                else:
+                    x+=1
+        return minor
+
+def minor_det_matrix(matrix):
+    x=[[0,0,0],[0,0,0],[0,0,0]]
+    for i in range(3):
+        for j in range(3):
+            x[i][j]=matrix[i][j]*det2x2(get_minor(matrix, i, j))
+    return x
+
+def matrix_transposition(matrix):
+    matrix_transponated=[[0,0,0],[0,0,0],[0,0,0]]
+    for i in range(3):
+        for j in range(3):
+            matrix_transponated[j][i]=matrix[i][j]
+    return matrix_transponated
+
+def inverse_matrix(matrix):
+    det = det3x3(matrix)
+    in_matrix = []
+    if det==0:
+        return 'Обратной матрицы не существует.'
+    else:
+        in_matrix=matrix_transposition(minor_det_matrix(matrix))
+        for i in range(3):
+            for j in range(3):
+                in_matrix[i][j]=in_matrix[i][j]/det
+        return in_matrix
+
+def Kramer(matrixA, matrixB):
+    detx=[]
+    ch=0
+    ans=[]
+    matrix=matrixA
+    det=det3x3(matrixA)
+    for k in range(3):
+        for i in range(3):
+            matrix[i][k]=matrixB[i][0]
+            detx.append(det3x3(matrix))
+        matrix=matrixA
+    if det == 0:
+        for i in range(3):
+            if detx[i]!=0:
+                ch+=1
+        if ch==0:
+            return 'Система не имеет решений (не совместна).'
+        if ch!=0:
+            return 'Система имеет бесконечное колличество решений.'
+    else:
+        for x in detx:
+            ans.append(x/det)
+        return ans
